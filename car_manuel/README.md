@@ -1,4 +1,3 @@
-# README.md
 # PDF Chatbot Project 🧠📄🤖
 # 현대자동차 메뉴얼 기반 챗봇봇
 
