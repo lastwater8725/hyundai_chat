@@ -4,6 +4,7 @@ from pdf2image import convert_from_path
 from huggingface_hub import hf_hub_download
 from doclayout_yolo import YOLOv10
 
+###전처리 실행 코드드
 
 # 모델 다운로드
 model_path = hf_hub_download(
