@@ -1,0 +1,29 @@
+
+---
+
+## ✅ pyproject.toml 예시
+
+```toml
+[project]
+name = "car-manuel-rag"
+version = "0.1.0"
+description = "자동차 매뉴얼 기반 RAG QA 시스템"
+authors = [{name = "Your Name", email = "you@example.com"}]
+dependencies = [
+  "pdf2image",
+  "pillow",
+  "tqdm",
+  "sentence-transformers",
+  "torch",
+  "numpy<2.0",                       # FAISS 호환
+  "faiss-cpu",
+  "easyocr",
+  "huggingface-hub",
+  "transformers",
+  "langchain",
+  "langchain-community",
+  "langchain-core",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

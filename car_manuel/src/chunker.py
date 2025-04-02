@@ -4,7 +4,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 #입력 json
-input_path = "data/parsed/doclayout_yolo_result.json"
+input_path = "data/parsed/doclayout_yolo_result_easyocr.json"
 output_path = "data/chunks/chunks.jsonl"
 
 def load_json(input_path):

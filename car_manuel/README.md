@@ -25,32 +25,58 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
 
 ## 📂 프로젝트 구조
 ```
-pdf-chatbot-project/
-├── app/                     # Streamlit 앱
-│   └── main.py
+car_manuel/
+├── data/
+│   ├── pdfs/                             # 원본 PDF
+│   ├── images/                           # 변환된 이미지들
+│   ├── parsed/                           # YOLO + OCR 결과 JSON 파일들
+│   ├── chunks/
+│   │   └── chunks.jsonl                  # 청크 단위 텍스트
+│   └── embeddings/
+│       └── faiss_index/                  # FAISS 인덱스 저장 위치
 │
-├── core/                    # 핵심 기능 (파싱, QA, 벡터화 등)      
-│   ├── doclayout_parser.py  # ✅ DocLayout-YOLO SDK 기반 파서, PDF->이미지
-│   ├── chunker.py           # 🔜 문단 단위 텍스트 추출 예정
-│   ├── qa_generator.py
-│   ├── vector_store.py      # FAISS 임베딩 저장
-│   └── chatbot.py
+├── src/
+│   ├── run.py                            # 전체 파이프라인 실행 스크립트
+│   ├── doclayout_paser.py                # YOLO + OCR 기반 파싱 코드
+│   ├── chunker.py                        # 청크 추출 코드
+│   └── embedder.py                       # 임베딩 및 벡터 DB 저장
 │
-├── data/                    # 데이터 파일
-│   ├── pdfs/                # 원본 PDF
-│   ├── images/              # 이미지 파일
-│   ├── parsed/              # ✅ 파싱 결과 (JSON)
-│   ├── chunks/              # 🔜 문단 단위 조각
-│   ├── datasets/            # QA 학습 데이터셋
-│   └── vector_store/        # 벡터 인덱스 저장
+├── rag/
+│   ├── qa_chain.py
+│   └── retriever.py                      # LangChain 기반 RAG QA 실행 코드
 │
-├── models/                  # 모델 설정
-│   └── bge_model.py
-│
-├── config/                  # 환경 설정
-│   └── settings.py
-│
-├── pyproject.toml
-├── requirements.txt
-├── README.md
-└── run.py                   # 전체 파이프라인 실행 스크립트
+├── pyproject.toml                        # 패키지 의존성 정의
+└── README.md                             # 전체 파이프라인 설명
+
+
+# 📘 자동차 매뉴얼 기반 RAG QA 시스템
+
+자동차 매뉴얼 PDF를 기반으로 한 문서 질의응답 시스템입니다.
+문서 레이아웃 분석과 OCR을 통해 텍스트를 추출하고, 임베딩과 FAISS를 활용해 유사한 문서를 검색합니다.
+
+---
+
+## ✅ 파이프라인 요약
+
+1. **PDF → 이미지 변환**
+2. **DocLayout-YOLO + EasyOCR (또는 PaddleOCR)** 를 활용한 레이아웃 분석
+3. **청크 추출**: 블록 단위로 텍스트 청크화
+4. **BGE 임베딩 + FAISS 벡터 DB 구축**
+5. **LangChain 기반 QA 시스템 구축** (LLM: KULLM3)
+
+---
+
+## 🏗️ 실행 순서
+
+```bash
+# 1. PDF → 이미지 변환 + 레이아웃 분석
+python src/run.py
+
+# 2. 청크 생성
+python src/chunker.py
+
+# 3. 벡터 임베딩 생성
+python src/embedder.py
+
+# 4. LangChain 기반 질의응답
+python retriever/retriever.py
