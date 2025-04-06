@@ -7,15 +7,17 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
 ---
 
 
-### Task: DocLayout-YOLO SDK 기반 문서 구조 분석
+### Task: DocLayout-YOLO SDK 기반 문서 구조 분석 및 파싱 후 rag를 이용한 qa챗봇 제작
 - **DocLayout-YOLO 공식 SDK**를 활용해 문서 이미지 내의 구조적 요소(텍스트, 표, 제목 등)를 탐지합니다.
 - 각 박스마다 **easyOCR**로 텍스트를 추출합니다.
 - 결과를 **JSON** 형식으로 저장하여 이후 chunking 및 embedding에 활용할 수 있도록 구성합니다.
-
+- 이후 langchain과 연결하여 qa형 챗봇을 진행합니다.
 ---
 
 ## 🛠️ 기술 스택
 - Python 3.10
+- linux -> (ubuntu22.04)
+- anconda 
 - Streamlit (웹 UI)
 - LangChain, FAISS (RAG 기반 검색 QA)
 - OpenAI API / BGE-M3 (LLM 응답 생성)
@@ -78,5 +80,8 @@ python src/chunker.py
 # 3. 벡터 임베딩 생성
 python src/embedder.py
 
-# 4. LangChain 기반 질의응답
+# 4. 랭체인에 맞게 임베딩
+python retriever/langchain_index.py
+
+# 5. LangChain 기반 질의응답
 python retriever/retriever.py
