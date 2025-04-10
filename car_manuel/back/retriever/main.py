@@ -46,17 +46,17 @@ pipe = pipeline(
 
 llm = HuggingFacePipeline(pipeline=pipe)
 
-#프롬프트 템플릿(명시)
-template = """너는 현대, 기아 자동차 메뉴얼 기반 ai야 문서내용을 참고하여
-질문에 답변해줘, 또한 어떤 차종인지 얘기해줘.
+# #프롬프트 템플릿(명시)
+# template = """너는 현대, 기아 자동차 메뉴얼 기반 ai야 문서내용을 참고하여
+# 질문에 답변해줘, 또한 어떤 차종인지 얘기해줘.
 
-문서 내용:
-{context}
+# 문서 내용:
+# {context}
 
-질문: {question}
-답변:
-"""
-prompt = PromptTemplate.from_template(template)
+# 질문: {question}
+# 답변:
+# """
+# prompt = PromptTemplate.from_template(template)
 
 #qa_chain
 qa_chain = RetrievalQA.from_chain_type(
@@ -78,6 +78,6 @@ if __name__ == "__main__":
         docs = retriever.get_relevant_documents(query)
         print("\n📄 참고한 문서:\n")
         for i, doc in enumerate(docs):
-            print(f"[{i+1}] {doc.page_content[:500]}...\n")
+            print(f"[{i+1}] {doc.metadata.get('source', '문서')}: {doc.page_content[:100]}...\n")
         result = qa_chain.invoke({"question": query})
         print(f"\n💬 답변: {result['result']}\n")
