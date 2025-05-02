@@ -13,7 +13,7 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
 - PDF Parser 중하나만해서 텍스트를 추출한다음에 텍스트를 FAISS 임베딩 시켜야 한다. 
 - 지금 PDF->이미지로변환->OCR 하는거는 굉장히 비효율적이다. 
  
-
+---
 
 ### Task: DocLayout-YOLO SDK 기반 문서 구조 분석 및 pdfminer 기반 pdf 파싱 후 rag를 이용한 qa챗봇 제작
 
@@ -38,7 +38,6 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
 - pdfminer.six
 - easyOCR, PyMuPDF, pdfminer, DocLayout-YOLO (문서 파싱)
 
----
 
 ## 📂 프로젝트 구조
 ```
@@ -67,9 +66,9 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
         │       ├── main.py
         │       └── retriever.py
         └── front
+```
 
-
-# 📘 자동차 매뉴얼 기반 RAG QA 시스템
+## 📘 자동차 매뉴얼 기반 RAG QA 시스템
 
 자동차 매뉴얼 PDF를 기반으로 한 문서 질의응답 시스템입니다.
 문서 레이아웃 분석과 OCR을 통해 텍스트를 추출하고, 임베딩과 FAISS를 활용해 유사한 문서를 검색합니다.
