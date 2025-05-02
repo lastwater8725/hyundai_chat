@@ -51,7 +51,7 @@ template = """
 너는 현대자동차 매뉴얼 기반 AI야.
 아래 문서를 참고해서 사용자의 질문에 친절하고 정확하게 답변해줘.
 각 문서는 특정 차량 모델({model})에 대한 내용이야.
-현재 문서에는 아반떼, 싼타페, 아이오닉5에 대한 정보가 포함되어있어
+현재 문서에는 아반떼, 싼타페, 투싼, 스타리아, 케스파파에 대한 정보가 포함되어있어
 관련 내용 우선적으로 참고해서 바탕으로 안내해줘.
 참고한 rag문서의 페이지와 차량 이름을 항상 같이 출력해줘.
 rag문서 내용을 명확하게 파악하고 답변해줘.
@@ -59,6 +59,7 @@ rag문서 내용을 명확하게 파악하고 답변해줘.
 예) [page 5, model: 아반떼]
 질문한 차량 모델과 문서의 모델명이 일치할 경우 해당 내용을 가장 신뢰도 높은 정보로 간주해서 답변을 구성해줘.
 다른 차량 문서에 유사한 정보가 있을 수 있으니 필요시 참고하고 어떤 문서도 함께 참고했는지 명시해줘
+다른 차량 문서를 참고한 경우, 어떤 문서를 참고했는지도 명확히 문장으로 작성해줘.
 
 문서 내용:
 {context}
@@ -76,7 +77,7 @@ custom_prompt = PromptTemplate(
 )
 
 # langchain rag qa 생성
-llm_chain = LLMChain(llm=llm, prompt=custom_prompt)
+llm_chain = LLMChain(llm=llm, prompt=custom_prompt, output_key="text")
 
 # 질의 루프 
 print("🚗 자동차 매뉴얼 기반 RAG QA 시스템 입니다. 알고자 하는 차종을 함께 입력해주세요.")
@@ -88,7 +89,7 @@ while True:
         break
     
     # 질문에서 차종 추출 
-    known_models = ["아반떼", "싼타페", "아이오닉5"]
+    known_models = ["아반떼", "싼타페", "투싼", "캐스퍼", "스타리아"]
     matched_model = next((m for m in known_models if m in query), "미지정")
     
     # 유사 문서 검색
@@ -107,7 +108,7 @@ while True:
 
     # context 구성(출처포함)
     context_blocks = []
-    for doc in selected_docs:
+    for i, doc in enumerate(selected_docs, 1):
         pages = doc.metadata.get("pages", [])
         model = doc.metadata.get("model", "")
         citation = f"[page {pages[0] if pages else '?'} / model: {model}]"
