@@ -63,7 +63,7 @@ def parse_pdf(pdf_path):
                     })
                     
                     
-        # 🔥 warning 블록 병합 추가
+        # warning 블록 병합 추가
         merged_blocks = []
         prev_block = None
         for block in blocks:
