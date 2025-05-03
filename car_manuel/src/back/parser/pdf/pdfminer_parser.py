@@ -10,7 +10,15 @@ output_dir = "./data/parsed/pdfminer"
 
 # 글자 감지, 타입 분류, 경고 분류
 def parse_pdf(pdf_path):
-    laparams = LAParams()
+    laparams = LAParams(
+    line_margin=0.2,
+    char_margin=2.0,
+    word_margin=0.1,
+    boxes_flow=None,
+    detect_vertical=False,
+    all_texts=True
+    )
+
     pages_data = []
     
     list_pattern = r"^\s*(\d+[\.\)]|[\-\•\○])\s+"
