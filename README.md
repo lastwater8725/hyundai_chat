@@ -1,19 +1,11 @@
 # PDF Chatbot Project 🧠📄🤖
 # 현대자동차 메뉴얼 기반 챗봇
 
-문서 기반 상담형 챗봇을 구축하는 프로젝트입니다.
-PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의 검색 및 응답 시스템으로 연결합니다.
+현대자동차 자동차 문서 기반 상담형 챗봇을 구축하는 프로젝트입니다.
+적용한 문서는 아반떼, 산타페, 캐스퍼, 스타리아, 투싼입니다. PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의 검색 및 응답 시스템으로 연결합니다. 실 구현은 pdfminer로 진행하였습니다. 
 
 ---
-### 수정사항
-- 프로젝트 구조화를 시켜야 합니다. 0
-- 프론트엔드, 백엔드, 0
-- 엔트리포인트 정의  0
-- RAG 성능 개선인데,
-- PDF Parser 중하나만해서 텍스트를 추출한다음에 텍스트를 FAISS 임베딩 시켜야 한다. 
-- 지금 PDF->이미지로변환->OCR 하는거는 굉장히 비효율적이다. 
- 
----
+
 
 ### Task: DocLayout-YOLO SDK 기반 문서 구조 분석 및 pdfminer 기반 pdf 파싱 후 rag를 이용한 qa챗봇 제작
 
@@ -38,6 +30,7 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
 - pdfminer.six
 - easyOCR, PyMuPDF, pdfminer, DocLayout-YOLO (문서 파싱)
 
+---
 
 ## 📂 프로젝트 구조
 ```
@@ -49,8 +42,7 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
     ├── data
     ├── project.toml
     └── src
-        ├── back
-        │   ├── main.py             # 엔트리 포인트
+        ├── back             # 엔트리 포인트
         │   ├── parser              # ocr, pdf구분
         │   │   ├── ocr
         │   │   │   ├── __init__.py
@@ -62,16 +54,20 @@ PDF 문서를 파싱하여 구조화된 데이터로 변환하고, LLM 기반의
         │   │   └── pdf
         │   │       └── pdfminer_parser.py
         │   └── retriever
-        │       ├── langchain_index.py
-        │       ├── main.py
-        │       └── retriever.py
+        │       ├── ocr
+        │       │   ├── langchain_index.py
+        │       │   ├── main.py
+        │       │   └── retriever.py
+        │       ├── pdf
+        │           ├── main.py
+        │           └── embedding.py
         └── front
-```
 
+```
 ## 📘 자동차 매뉴얼 기반 RAG QA 시스템
 
 자동차 매뉴얼 PDF를 기반으로 한 문서 질의응답 시스템입니다.
-문서 레이아웃 분석과 OCR을 통해 텍스트를 추출하고, 임베딩과 FAISS를 활용해 유사한 문서를 검색합니다.
+pdfminer를 활용한 파싱 및 문서 레이아웃 분석과 OCR을 통해 텍스트를 추출하고, 임베딩과 FAISS를 활용해 유사한 문서를 검색합니다.
 
 ---
 
