@@ -77,6 +77,10 @@ def extract_model_from_filename(filename):
         return "투싼"
     elif "staria" in base:
         return "스타리아"
+    elif "grandeur" in base:
+        return "그랜저"
+    elif "sonata" in base:
+        return "소나타"
     else:
         return "기타"
             
