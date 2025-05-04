@@ -18,8 +18,9 @@ llm_chain = load_llm_chain()
 # --- Streamlit UI ---
 st.set_page_config(page_title="현대차 매뉴얼 QA", layout="wide")
 st.title("🚗 현대자동차 매뉴얼 기반 RAG QA 시스템")
+st.header('현재 등록되어 있는 모델은 아반떼, 싼타페, 투싼, 캐스퍼, 스타리아, 그랜저, 소나타 입니다.')
 
-query = st.text_input("❓ 질문을 입력하세요 (예: 싼타페의 뒷유리 와이퍼가 작동하지 않을 때 확인할 사항은)")
+query = st.text_input("❓ 질문을 입력하세요 (예: 싼타페의 뒷유리 와이퍼가 작동하지 않을 때 확인할 사항은) exit를 누르면 종료됩니다.")
 
 known_models = ["아반떼", "싼타페", "투싼", "캐스퍼", "스타리아", "그랜저", "소나타"]
 matched_model = next((m for m in known_models if m in query), "미지정")

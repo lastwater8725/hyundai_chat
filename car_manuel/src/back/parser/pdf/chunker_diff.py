@@ -1,3 +1,6 @@
+# 아반떼, 스타리아의 pdf차이로 인한 예외 청크 처리
+
+
 import json
 import re
 
