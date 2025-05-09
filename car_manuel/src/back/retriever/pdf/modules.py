@@ -8,7 +8,7 @@ from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
 def load_embedding():
     embedding = HuggingFaceBgeEmbeddings(
-        model_name="BAAI/bge-m3",
+        model_name="BAAI/bge-m3",       # ko 모델 
         model_kwargs={"device": "cuda:0"},
         encode_kwargs={"normalize_embeddings": True},
     )

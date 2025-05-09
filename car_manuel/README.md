@@ -18,7 +18,7 @@
 - *** pdfminer기준***
 - pdfminer를 이용하여 정보를 추출합니다. 
 
-- 이후 langchain과 연결하여 qa형 챗봇을 진행합니다.
+- 이후 langchain과 연결하여 qa형 챗봇을 진행합니다.(임베딩 - BGE-M3, llm - 엑사온온)
 ---
 
 ## 🛠️ 기술 스택
@@ -27,7 +27,7 @@
 - anconda 
 - Streamlit (웹 UI)
 - LangChain, FAISS (RAG 기반 검색 QA)
-- OpenAI API / BGE-M3 (LLM 응답 생성)
+- lg 엑사온 / BGE-M3 (LLM 응답 생성)
 - pdfminer.six
 - easyOCR, PyMuPDF, pdfminer, DocLayout-YOLO (문서 파싱)
 
@@ -98,10 +98,10 @@ python src/back/parser/pdf/pdfminer_parser.py
 python src/back/parser/pdf/chunker.py
 
 # 3. 벡터 임베딩 생성
-python src/embedder.py
+python src/back/retriever/embedding.py
 
-# 4. 랭체인에 맞게 임베딩
-python retriever/langchain_index.py
+# 4. 터미널에서 실행
+python src/back/retriever/rag_pipeline.py
 
-# 5. LangChain 기반 질의응답
-python retriever/retriever.py
+# 5. stramlit에서 실행
+python src/front/main.py

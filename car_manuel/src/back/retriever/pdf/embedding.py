@@ -18,10 +18,11 @@ embedding_model_name = "BAAI/bge-m3"
 embedding_model = HuggingFaceBgeEmbeddings(
     model_name=embedding_model_name,
     model_kwargs={"device": "cuda:0"},
-    encode_kwargs={"normalize_embeddings": True},
+    encode_kwargs={"normalize_embeddings": True},       #true, false 비교 
 )
 
 
+# pdfpaser 라이브러리 사용해보기 청크 사이즈 없음,
 def load_chunks(chunk_path):
     docs = []
     with open(chunk_path, "r", encoding="utf-8") as f:
@@ -58,10 +59,10 @@ def main():
     print(f"전체 문서 개수: {len(all_docs)}")
     
     # FAISS 인덱스 생성 배치로로
-    batch_size = 8
+    batch_size = 8              #배치 사이즈 조정
     index = None
     
-    for batch in tqdm(list(chunked(all_docs, batch_size)), desc="embedding"):
+    for batch in tqdm(list(chunked(all_docs, batch_size)), desc="embedding"):           # 백터 db를 물리적으로 나눠보기, 앙상블? llm이 근접한 
         if not batch:
             continue
         if index is None:
