@@ -3,6 +3,7 @@ from pathlib import Path
 import sys
 import os
 
+# 파서에 메타데이터로 souce추가가
 # --- 경로 설정 ---
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODULE_PATH = BASE_DIR / "back" / "retriever" / "pdf"

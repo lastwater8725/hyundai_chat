@@ -1,13 +1,13 @@
 # modules.py — 핵심 기능만 분리
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceBgeEmbeddings
-from langchain_community.llms import HuggingFacePipeline
-from langchain.chains import LLMChain
-from langchain.prompts import PromptTemplate
+from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
+from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableSequence
+
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
 def load_embedding():
-    embedding = HuggingFaceBgeEmbeddings(
+    embedding = HuggingFaceEmbeddings(
         model_name="BAAI/bge-m3",       # ko 모델 
         model_kwargs={"device": "cuda:0"},
         encode_kwargs={"normalize_embeddings": True},
@@ -17,6 +17,7 @@ def load_embedding():
 def load_db(embedding):
     index_path = './data/parsed/pdfminer/embedding/faiss_index'
     db = FAISS.load_local(index_path, embedding, allow_dangerous_deserialization=True)
+    # 서버 배포시에 역직렬화 사용시 위험하므로 서버 배포시엔 유의 수정 필요
     return db
 
 def load_llm_chain():
@@ -70,4 +71,5 @@ def load_llm_chain():
         template=template.replace("{question}", "{query}")
     )
 
-    return LLMChain(llm=llm, prompt=prompt, output_key="text")
+    chain = prompt | llm 
+    return chain
