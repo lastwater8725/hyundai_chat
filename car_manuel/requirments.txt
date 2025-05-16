@@ -1,0 +1,11 @@
+torch==2.1.0+cu118
+transformers
+langchain
+langchain-community
+langchain-huggingface
+faiss-cpu
+streamlit
+tqdm
+pdfminer.six
+pymupdf
+easyocr

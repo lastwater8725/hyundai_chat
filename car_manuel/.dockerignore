@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+*.pt
+*.log
+data/parsed/pdfminer/embedding/faiss_index/
