@@ -1,0 +1,28 @@
+# Transformers & 모델 추론 관련
+transformers==4.50.3
+accelerate==1.6.0
+sentence-transformers==4.0.1
+
+# LangChain 핵심 패키지
+langchain-core==0.3.49
+langchain-community==0.3.20
+langchain-huggingface==0.1.2
+
+# FAISS GPU (faiss-cpu에서 교체됨)
+faiss-gpu==1.7.2
+
+# Streamlit UI
+streamlit==1.45.0
+
+# OCR 및 문서 처리
+easyocr==1.7.2
+pdfminer.six==20250327
+pymupdf==1.20.2
+
+# 시각화 / 이미지 처리
+scikit-image==0.25.2
+opencv-python-headless==4.11.0.86
+
+# 기타 유틸
+tqdm==4.67.1
+numpy<2.0.0
