@@ -20,50 +20,25 @@ def save_chunks(chunks, file_path):
 
 def create_chunks(pages_data, model_name):
     chunks = []
-    current_chunk = {
-        "text": "",
-        "type": "",
-        "source_pages": set(),
-        "model": model_name
-    }
-    
+
     for page in pages_data:
         page_num = page["page"]
-        for block in page["blocks"]:
-            block_type = block["type"]
-            block_text = block["text"].strip()
-            
-            if not block_text:
-                continue
-            
-            # 제목 등장 시 새로운 청크 시작
-            if block_type in ["title", "subtitle"]:
-                if current_chunk["text"]:
-                    current_chunk["source_pages"] = list(current_chunk["source_pages"])
-                    chunks.append(current_chunk)
-                current_chunk = {
-                    "text": block_text,
-                    "type": block_type,
-                    "source_pages": {page_num},
-                    "model": model_name
-                }
-            else:
-                # 일반 블록은 이어 붙이기
-                if current_chunk["text"]:
-                    current_chunk["text"] += "\n" + block_text
-                else:
-                    current_chunk["text"] = block_text
-                current_chunk["source_pages"].add(page_num)
-                    
-                    
-    # 마지막 청크 저장
-    if current_chunk["text"]:
-        current_chunk["source_pages"] = list(current_chunk["source_pages"])
-        current_chunk["model"] = model_name
-        chunks.append(current_chunk)
-                    
-    return chunks
+        page_text = ""
 
+        for block in page["blocks"]:
+            block_text = block["text"].strip()
+            if block_text:
+                page_text += block_text + "\n"
+
+        if page_text.strip():
+            chunks.append({
+                "text": page_text.strip(),
+                "type": "page_chunk",
+                "source_pages": [page_num],
+                "model": model_name
+            })
+
+    return chunks
 
 def extract_model_from_filename(filename):
     base = os.path.basename(filename).lower()
