@@ -1,6 +1,6 @@
 # 현대자동차 메뉴얼 기반 RAG QA 시스템
 
-현대자동차 PDF 매뉴얼을 기반으로 사용자의 차량 관련 질문에 답변하는 RAG(Retrieval-Augmented Generation) 기반 질의응답 시스템입니다. Streamlit 기반 UI와 FastAPI 백엔드를 분리하여 멀티 컨테이너 구조로 설계되어 있으며, FAISS 벡터 검색 및 EXAONE-3.5 LLM을 활용한 고품질 응답 생성을 지원합니다.
+현대자동차 PDF 매뉴얼을 기반으로 사용자의 차량 관련 질문에 답변하는 RAG(Retrieval-Augmented Generation) 기반 질의응답 시스템입니다.Streamlit 기반 UI와 FastAPI 백엔드를 분리한 멀티 컨테이너 구조로 설계되었으며, FAISS 벡터 검색 및 EXAONE-3.5 LLM을 활용한 고품질 응답 생성을 지원합니다.또한 HyperCLOVA X Vision 기반 이미지 이해 기능을 추가하여 이미지 기반 질의도 지원합니다.
 
 ---
 
@@ -9,9 +9,13 @@
 - 현대차 PDF 문서를 구조화 파싱 (pdfminer 기반)
 - 텍스트 블록 → 청크화 → 차량 모델 메타정보 추가
 - BGE-M3 임베딩 모델로 벡터화 → FAISS 인덱스 구축
+- 차량 모델(metadata) 기준으로 FAISS 문서 필터링 지원
+- HyperCLOVA X Vision 기반 이미지 분석 → 질문 생성
 - LangChain 기반 Retriever + EXAONE LLM 응답 생성
 - Streamlit UI ↔ FastAPI 백엔드 연동
 - 차량 모델 기준 응답 우선순위 및 출처 인용 지원
+
+
 
 ---
 
@@ -21,7 +25,7 @@
 - Streamlit 1.45 (프론트엔드)
 - FastAPI + Uvicorn (백엔드)
 - LangChain + FAISS
-- EXAONE-3.5 / BGE-M3 (LLM/Embedding)
+- EXAONE-3.5 / BGE-M3 / HyperCLOVA X Vision
 - Docker, Docker Compose
 
 ---
@@ -67,7 +71,7 @@ FastAPI Docs: http://localhost:8000/docs
 ---
 ## 🧪 API 사용 예시 (백엔드)
 
-### POST/query
+### -> POST/query
 ```json
 {
   "query": "싼타페의 시동이 안 걸릴 때 조치 방법은?",
@@ -82,7 +86,17 @@ FastAPI Docs: http://localhost:8000/docs
   ]
 }
 
+### -> POST/generate-question (이미지 기반 질문 생성)
 
+요청:
+
+파일 업로드: multipart/form-data
+응답 예시:
+```json
+{
+  "question": "계기판 경고등이 무엇을 의미하나요?"
+}
+```
 ---
 ## 📌 참고사항
 지원 차량: 아반떼, 산타페, 캐스퍼, 스타리아, 투싼, 그랜저, 소나타
