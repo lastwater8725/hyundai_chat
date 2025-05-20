@@ -77,6 +77,7 @@ FastAPI Docs: http://localhost:8000/docs
   "query": "싼타페의 시동이 안 걸릴 때 조치 방법은?",
   "model": "싼타페"
 }
+```
 ```json
 {
   "answer": "싼타페 시동 문제는 다음과 같은 사항을 점검해야 합니다...",
@@ -85,7 +86,7 @@ FastAPI Docs: http://localhost:8000/docs
     { "page": 12, "model": "투싼" }
   ]
 }
-
+```
 ### -> POST/generate-question (이미지 기반 질문 생성)
 
 요청:
