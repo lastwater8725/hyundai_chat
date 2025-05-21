@@ -15,6 +15,9 @@
 - Streamlit UI ↔ FastAPI 백엔드 연동
 - 차량 모델 기준 응답 우선순위 및 출처 인용 지원
 
+사용자
+├─ 질문 입력 → Streamlit → FastAPI → FAISS 검색 → ✅ EXAONE 응답 생성
+└─ 이미지 업로드 → FastAPI → HyperCLOVA X Vision → 생성된 질문 → 위와 동일 처리
 
 
 ---
@@ -33,23 +36,42 @@
 ## 📁 디렉토리 구조
 ```
 car_manuel/
-├── front/ # 사용자 UI (Streamlit)
-│ ├── main.py
-│ └── Dockerfile
-├── back/ # 추론 서버 (FastAPI)
-│ ├── app/
-│ │ ├── api.py # /query 엔드포인트
-│ │ └── modules.py # embedding, llm_chain 등 로딩 함수
-│ ├── parser/ # pdfminer 기반 파서
-│ ├── retriever/ # embedding 및 FAISS 관련 모듈
-│ ├── main.py # FastAPI 앱 실행 진입점
-│ └── Dockerfile
-├── data/ # 공유 문서 및 인덱스 저장
-│ ├── car_manual_data/
-│ ├── parsed/
-│ └── embedding/faiss_index/
-├── docker-compose.yml # 전체 컨테이너 조립
-└── requirements.txt # 실행 환경 패키지 목록
+├── README.md                  # 프로젝트 설명서
+├── project.toml              # 프로젝트 메타 정보
+├── requirements.txt          # 전체 의존성 패키지 목록
+├── docker-compose.yml        # 전체 서비스 정의 (Streamlit + FastAPI)
+│
+├── data/                     # 데이터 및 파싱 결과
+│   ├── car_manual_data/      # 원본 PDF 매뉴얼
+│   └── parsed/              # 파싱 및 임베딩 결과
+│       └── pdfminer/
+│           ├── ...          # 파싱된 JSON
+│           ├── chunker/     # 청크 단위 분할 데이터
+│           │   ├── *_chunks.json
+│           ├── embedding/
+│           │   └── faiss_index/
+│           │       ├── index.faiss
+│           │       └── index.pkl
+│
+├── src/                      # 소스코드
+│   ├── back/                 # 백엔드 (FastAPI 기반)
+│   │   ├── Dockerfile
+│   │   ├── main.py           # FastAPI 서버 실행 진입점
+│   │   ├── app/              # 백엔드 핵심 모듈
+│   │   │   ├── api.py        # /query 엔드포인트 처리
+│   │   │   ├── modules.py    # LLM, Embedding, FAISS 로더
+│   │   │   └── hyperclova_client.py # VLM 분석용 클라이언트
+│   │   ├── parser/           # 파서 관련 모듈
+│   │   │   ├── pdfminer_parser.py
+│   │   │   ├── chunker.py
+│   │   │   └── chunker_diff.py
+│   │   └── retriever/        # 벡터 검색 관련
+│   │       └── embedding.py
+│
+│   └── front/                # 프론트엔드 (Streamlit)
+│       ├── Dockerfile
+│       └── main.py           # Streamlit UI 실행
+
 ```
 
 ## ▶ 실행 방법
@@ -59,25 +81,26 @@ car_manuel/
 ```bash
 docker-compose build
 docker-compose up
-
+```
 
 ### 2. 접속 경로
 ```bash
 Streamlit UI: http://localhost:8501
 
 FastAPI Docs: http://localhost:8000/docs
-
-
+```
 ---
+
 ## 🧪 API 사용 예시 (백엔드)
 
-### -> POST/query
+### 🔹 POST/query
 ```json
 {
   "query": "싼타페의 시동이 안 걸릴 때 조치 방법은?",
   "model": "싼타페"
 }
 ```
+
 ```json
 {
   "answer": "싼타페 시동 문제는 다음과 같은 사항을 점검해야 합니다...",
@@ -87,11 +110,12 @@ FastAPI Docs: http://localhost:8000/docs
   ]
 }
 ```
-### -> POST/generate-question (이미지 기반 질문 생성)
+### 🔹 POST/generate-question (이미지 기반 질문 생성)
 
 요청:
 
 파일 업로드: multipart/form-data
+
 응답 예시:
 ```json
 {
