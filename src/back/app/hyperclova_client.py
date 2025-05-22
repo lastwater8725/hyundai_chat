@@ -1,27 +1,51 @@
-from transformers import AutoProcessor, AutoModelForCausalLM
+from transformers import AutoModelForCausalLM, AutoProcessor, AutoTokenizer
 from PIL import Image
 import torch
 
-def generate_question_from_image(image_path: str, prompt: str = "이미지를 보고 질문 하나 생성해줘.") -> str:
+
+def generate_question_from_image(image_path: str) -> str:
     model_id = "naver-hyperclovax/HyperCLOVAX-SEED-Vision-Instruct-3B"
 
-    # 모델 및 프로세서 로드
+    # 모델과 프로세서, 토크나이저 로드
     processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True).to("cuda")
 
-    # 이미지 로드
-    image = Image.open(image_path).convert("RGB")
+    # Step 1. VLM chat format 구성 (이미지 + 텍스트 프롬프트)
+    vlm_chat = [
+        {"role": "user", "content": {"type": "image", "image": image_path}},
+        {"role": "user", "content": {"type": "text", "text": "사진을 보고 특이사항에 대해서 설명해줘. 경고등과 같은 문제가 있거나 특이한 사항은 자세하게 어떤 모습인지 알려줘줘 자동차와 관련된 사진이야야"}}
+    ]
 
-    # 입력 변환
-    inputs = processor(text=prompt, images=image, return_tensors="pt").to("cuda")
+    # Step 2. 이미지/비디오 전처리 (내부적으로 PIL.Image로 자동 변환됨)
+    new_chat, all_images, is_video_list = processor.load_images_videos(vlm_chat)
+    image_features = processor(all_images, is_video_list=is_video_list)
 
-    # 질문 생성
-    generate_ids = model.generate(**inputs, max_new_tokens=64)
-    question = processor.batch_decode(generate_ids, skip_special_tokens=True)[0]
+    # Step 3. 입력 텍스트 구성
+    input_ids = tokenizer.apply_chat_template(
+        new_chat,
+        return_tensors="pt",
+        tokenize=True,
+        add_generation_prompt=True
+    ).to("cuda")
 
-    return question
+    # Step 4. 모델 추론
+    outputs = model.generate(
+        input_ids=input_ids,
+        max_new_tokens=512,
+        do_sample=True,
+        top_p=0.6,
+        temperature=0.5,
+        repetition_penalty=1.0,
+        **image_features
+    )
+
+    # 결과 디코딩
+    result = tokenizer.batch_decode(outputs, skip_special_tokens=True)[0]
+    return result
+
 
 if __name__ == "__main__":
-    img_path = "sample_image.jpg"  # 테스트용 이미지 파일 경로
-    result = generate_question_from_image(img_path)
+    image_path = "sample_image.jpg"
+    result = generate_question_from_image(image_path)
     print("\n[생성된 질문]", result)
