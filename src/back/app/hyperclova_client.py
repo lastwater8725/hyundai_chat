@@ -13,9 +13,24 @@ def generate_question_from_image(image_path: str) -> str:
 
     # Step 1. VLM chat format 구성 (이미지 + 텍스트 프롬프트)
     vlm_chat = [
-        {"role": "user", "content": {"type": "image", "image": image_path}},
-        {"role": "user", "content": {"type": "text", "text": "사진을 보고 특이사항에 대해서 설명해줘. 경고등과 같은 문제가 있거나 특이한 사항은 자세하게 어떤 모습인지 알려줘줘 자동차와 관련된 사진이야야"}}
-    ]
+    {"role": "user", "content": {"type": "image", "image": image_path}},
+    {"role": "user", "content": {
+        "type": "text",
+        "text": (
+           "이 사진은 자동차와 관련되어 있습니다..\n"
+        "경고등, 파손과 같은 특이한 점이 보이면 다음과 같은 형식으로 정확히 답변해주세요.\n\n"
+        "- 특이사항 종류: 예) 스티어링 휠 모양, 엔진 모양, 브레이크, 타이어 압력 등\n"
+        "- 불빛 색상(존재시): 빨간색, 노란색, 없음 등\n"
+        "- 해석: 무엇을 의미하는지, 혹은 알 수 없다면 '모르겠다'라고 명확히 작성\n\n"
+        "예시: \n"
+        "- 특이사항 종류: 스티어링 휠 모양\n"
+        "- 불빛 색상: 빨간색\n"
+        "- 해석: 스티어링 휠 모양 빨간색 경고등이 존재합니다다.\n\n"
+        "해당 형식 외의 문장은 절대 포함하지 말고, 반드시 세 줄만 출력하세요."
+        )
+    }}
+]
+
 
     # Step 2. 이미지/비디오 전처리 (내부적으로 PIL.Image로 자동 변환됨)
     new_chat, all_images, is_video_list = processor.load_images_videos(vlm_chat)
@@ -48,4 +63,4 @@ def generate_question_from_image(image_path: str) -> str:
 if __name__ == "__main__":
     image_path = "sample_image.jpg"
     result = generate_question_from_image(image_path)
-    print("\n[생성된 질문]", result)
+    print("\n[생성된 답변]", result)
