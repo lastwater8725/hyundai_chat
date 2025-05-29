@@ -56,6 +56,11 @@ def extract_model_from_filename(filename):
         return "그랜저"
     elif "sonata" in base:
         return "소나타"
+    elif "ionic9" in base:
+        return "아이오닉9"
+    elif "ionic5" in base:
+        return "아이오닉5"
+
     else:
         return "기타"
             

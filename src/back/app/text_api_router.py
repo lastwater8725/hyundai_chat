@@ -1,7 +1,11 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List
 from .modules import load_embedding, load_db, load_llm_chain
+
+from PIL import Image
+import tempfile 
+
 
 router = APIRouter()
 embedding = load_embedding()
@@ -19,6 +23,7 @@ class QueryResponse(BaseModel):
     answer: str
     sources: List[SourceInfo]
 
+# 텍스트단단
 @router.post("/query", response_model=QueryResponse)
 def handle_query(req: QueryRequest):
     model_key = {
@@ -28,7 +33,9 @@ def handle_query(req: QueryRequest):
         "캐스퍼": "casper",
         "스타리아": "staria",
         "그랜저": "grandeur",
-        "소나타": "sonata"
+        "소나타": "sonata",
+        "아이오닉9": "ionic9",
+        "아이오닉5": "ionic5"
     }.get(req.model)
 
     if not model_key:
@@ -69,3 +76,4 @@ def handle_query(req: QueryRequest):
     sources = [{"page": doc.metadata.get("pages", ["?"])[0], "model": doc.metadata.get("model", "미지정")} for doc in selected]
 
     return QueryResponse(answer=answer_text, sources=sources)
+

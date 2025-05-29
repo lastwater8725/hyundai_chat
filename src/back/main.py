@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from back.app.api import router as query_router
+from back.app.text_api_router import router as query_router
+from back.app.image_api_router import router as image_router
 
 app = FastAPI()
 
@@ -15,4 +16,5 @@ app.add_middleware(
 
 # 🚏 API 라우터 등록
 app.include_router(query_router)
+app.include_router(image_router)
 
