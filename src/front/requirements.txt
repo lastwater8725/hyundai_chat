@@ -1,2 +1,7 @@
-docker-compose build
-docker-compose up
+# src/front/requirements.txt
+
+streamlit==1.45.0
+pandas==2.2.3
+python-dotenv==1.1.0
+requests==2.32.3
+Pillow==11.1.0

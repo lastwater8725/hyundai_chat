@@ -1,50 +1,48 @@
 import os
-# modules.py — 핵심 기능만 분리
+import torch
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFacePipeline
 from langchain_core.prompts import PromptTemplate
-from langchain_core.runnables import RunnableSequence
-
 from transformers import pipeline, AutoTokenizer, AutoModelForCausalLM
 
+# 1. 임베딩 모델 로드
 def load_embedding():
-    embedding = HuggingFaceEmbeddings(
-        model_name="BAAI/bge-m3",       # ko 모델 
+    return HuggingFaceEmbeddings(
+        model_name="BAAI/bge-m3",
         model_kwargs={"device": "cuda:0"},
         encode_kwargs={"normalize_embeddings": True},
     )
-    return embedding
 
+# 2. FAISS 벡터 DB 로드
 def load_db(model_name: str, embedding):
     model_name = model_name.lower()
     index_path = f"./data/parsed/pdfminer/embedding/faiss_index/{model_name}"
-    
     if not os.path.exists(index_path):
         raise ValueError(f"'{model_name}' 모델에 대한 인덱스가 존재하지 않습니다: {index_path}")
+    return FAISS.load_local(index_path, embedding, allow_dangerous_deserialization=True)
 
-    db = FAISS.load_local(index_path, embedding, allow_dangerous_deserialization=True)
-    return db
+# 3. 전역 모델/토크나이저/파이프라인 캐시
+_llm_model_name = "LGAI-EXAONE/EXAONE-3.5-2.4B-Instruct"
+_tokenizer = AutoTokenizer.from_pretrained(_llm_model_name)
+_model = AutoModelForCausalLM.from_pretrained(
+    _llm_model_name,
+    trust_remote_code=True,
+    torch_dtype=torch.float16
+).to("cuda")
 
+_llm_pipeline = pipeline(
+    "text-generation",
+    model=_model,
+    tokenizer=_tokenizer,
+    device=0,
+    max_new_tokens=512,
+    do_sample=False,
+)
+
+_llm = HuggingFacePipeline(pipeline=_llm_pipeline)
+
+# 4. LLM 체인 로드 함수
 def load_llm_chain():
-    llm_model_name = "LGAI-EXAONE/EXAONE-3.5-2.4B-Instruct"
-    tokenizer = AutoTokenizer.from_pretrained(llm_model_name)
-    model = AutoModelForCausalLM.from_pretrained(
-        llm_model_name,
-        trust_remote_code=True
-    ).to("cuda")
-
-    llm_pipeline = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        device=0,
-        max_new_tokens=512,
-        do_sample=False,
-    )
-
-    llm = HuggingFacePipeline(pipeline=llm_pipeline)
-
-    # === 프롬프트 템플릿 정의 ===
     template = """
     너는 현대자동차 매뉴얼 기반 AI야.
     아래 문서를 참고해서 사용자의 질문에 친절하고 정확하게 답변해줘.
@@ -65,16 +63,13 @@ def load_llm_chain():
     {context}
 
     질문:
-    {question}
+    {query}
 
     답변을 문장으로 완성해줘.
     답변:
-"""
-
+    """
     prompt = PromptTemplate(
         input_variables=["context", "query", "model"],
-        template=template.replace("{question}", "{query}")
+        template=template
     )
-
-    chain = prompt | llm 
-    return chain
+    return prompt | _llm

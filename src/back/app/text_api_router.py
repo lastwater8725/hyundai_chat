@@ -1,16 +1,14 @@
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List
 from .modules import load_embedding, load_db, load_llm_chain
 
-from PIL import Image
-import tempfile 
-
-
+# 전역 초기화 (중복 로드 방지)
 router = APIRouter()
 embedding = load_embedding()
 llm_chain = load_llm_chain()
 
+# 입력/출력 스키마 정의
 class QueryRequest(BaseModel):
     query: str
     model: str
@@ -23,19 +21,13 @@ class QueryResponse(BaseModel):
     answer: str
     sources: List[SourceInfo]
 
-# 텍스트단단
+# 텍스트 질의 API
 @router.post("/query", response_model=QueryResponse)
 def handle_query(req: QueryRequest):
     model_key = {
-        "아반떼": "avante",
-        "싼타페": "santafe",
-        "투싼": "tucson",
-        "캐스퍼": "casper",
-        "스타리아": "staria",
-        "그랜저": "grandeur",
-        "소나타": "sonata",
-        "아이오닉9": "ionic9",
-        "아이오닉5": "ionic5"
+        "아반떼": "avante", "싼타페": "santafe", "투싼": "tucson",
+        "캐스퍼": "casper", "스타리아": "staria", "그랜저": "grandeur",
+        "소나타": "sonata", "아이오닉9": "ionic9", "아이오닉5": "ionic5"
     }.get(req.model)
 
     if not model_key:
@@ -53,9 +45,7 @@ def handle_query(req: QueryRequest):
     if not selected:
         return QueryResponse(answer="해당 차량에 대한 정보가 없습니다.", sources=[])
 
-    context_blocks = []
-    model_count = {}
-
+    context_blocks, model_count = [], {}
     for doc in selected:
         model = doc.metadata.get("model", "미지정")
         pages = doc.metadata.get("pages", ["?"])
@@ -76,4 +66,3 @@ def handle_query(req: QueryRequest):
     sources = [{"page": doc.metadata.get("pages", ["?"])[0], "model": doc.metadata.get("model", "미지정")} for doc in selected]
 
     return QueryResponse(answer=answer_text, sources=sources)
-
