@@ -1,6 +1,8 @@
 # 현대자동차 메뉴얼 기반 RAG QA 시스템
 
-현대자동차 PDF 매뉴얼을 기반으로 사용자의 차량 관련 질문에 답변하는 RAG(Retrieval-Augmented Generation) 기반 질의응답 시스템입니다.Streamlit 기반 UI와 FastAPI 백엔드를 분리한 멀티 컨테이너 구조로 설계되었으며, FAISS 벡터 검색 및 EXAONE-3.5 LLM을 활용한 고품질 응답 생성을 지원합니다.또한 HyperCLOVA X Vision 기반 이미지 이해 기능을 추가하여 이미지 기반 질의도 지원합니다.
+현대자동차 PDF 매뉴얼을 기반으로 사용자의 차량 관련 질문에 답변하는 RAG(Retrieval-Augmented Generation) 기반 질의응답 시스템입니다.
+Streamlit 기반 UI와 FastAPI 백엔드를 분리한 멀티 컨테이너 구조로 설계되었으며, FAISS 벡터 검색 및 EXAONE-3.5 LLM을 활용한 고품질 응답 생성을 지원합니다.
+또한 HyperCLOVA X Vision 기반 이미지 이해 기능을 추가하여 이미지 기반 질의도 지원합니다.
 ---
 
 ## 💻 실행 환경
@@ -14,7 +16,7 @@
 - 백엔드: `src/back/Dockerfile`, `src/back/requirements.txt`
 - 프론트엔드: `src/front/Dockerfile`, `src/front/requirements.txt`
 
---
+
 ---
 
 ## ✅ 주요 기능
@@ -29,6 +31,7 @@
 - 차량 모델 기준 응답 우선순위 및 출처 인용 지원
 
 ## work flow
+```
 사용자
 ├─ (1) 질문 입력 → Streamlit UI
 │               └─ FastAPI (/query)
@@ -38,7 +41,7 @@
 └─ (2) 이미지 업로드 → FastAPI (/image-query)
     └─ HyperCLOVA X Vision → 질문 생성
         └─ 위와 동일한 검색 + 응답 생성
-
+```
 
 
 ---
@@ -131,7 +134,7 @@ FastAPI Docs: http://localhost:8000/docs
 
 요청:
 
-파일 업로드: multipart/form-data
+파일 업로드: data
 
 응답 예시:
 ```json
@@ -144,9 +147,7 @@ FastAPI Docs: http://localhost:8000/docs
 지원 차량: 아반떼, 소나타, 그랜저, 싼타페, 투싼, 스타리아, 캐스퍼, 아이오닉5, 아이오닉9
 
 
-EXAONE 모델 로딩 시 최초 지연 있음
-
-PDF 구조에 따라 일부 차종은 수동 조정 필요
+EXAONE, clova 모델 로딩 시 최초 지연 있음
 
 파싱 및 인덱싱은 최초 1회만 수행 (결과는 /data/에 저장됨)
 
