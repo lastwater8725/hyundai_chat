@@ -1,8 +1,10 @@
 # 현대자동차 메뉴얼 기반 RAG QA 시스템
 
 현대자동차 PDF 매뉴얼을 기반으로 사용자의 차량 관련 질문에 답변하는 RAG(Retrieval-Augmented Generation) 기반 질의응답 시스템입니다.
+
 Streamlit 기반 UI와 FastAPI 백엔드를 분리한 멀티 컨테이너 구조로 설계되었으며, FAISS 벡터 검색 및 EXAONE-3.5 LLM을 활용한 고품질 응답 생성을 지원합니다.
-또한 HyperCLOVA X Vision 기반 이미지 이해 기능을 추가하여 이미지 기반 질의도 지원합니다.
+
+또한 HyperCLOVA X Vision 기반 이미지 이해 기능을 추가하여 이미지 기반 질의 또한한 지원합니다.
 ---
 
 ## 💻 실행 환경
